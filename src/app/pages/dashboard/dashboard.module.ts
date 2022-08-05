@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import {NbCalendarKitModule, NbCardModule} from '@nebular/theme';
+import { ReactiveFormsModule } from '@angular/forms';
+import {NbButtonModule, NbCalendarKitModule, NbCardModule, NbInputModule, NbStepperModule} from '@nebular/theme';
 
 import { ThemeModule } from '../../@theme/theme.module';
 import { DashboardComponent } from './dashboard.component';
@@ -8,6 +9,10 @@ import { DashboardComponent } from './dashboard.component';
   imports: [
     NbCardModule,
     ThemeModule,
+    NbStepperModule,
+    ReactiveFormsModule,
+    NbButtonModule,
+    NbInputModule
   ],
   declarations: [
     DashboardComponent,

@@ -16,6 +16,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'people-outline',
     link: '/pages/speaker',
   },
+  {
+    title: 'N° Discours',
+    icon: 'people-outline',
+    link: '/pages/speech',
+  }
   // {
   //   title: 'Auth',
   //   icon: 'lock-outline',

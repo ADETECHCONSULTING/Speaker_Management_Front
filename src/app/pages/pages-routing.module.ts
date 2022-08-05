@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {SpeakerComponent} from './speaker/speaker.component';
+import { SpeechComponent } from './speech/speech.component';
 
 const routes: Routes = [{
   path: '',
@@ -22,6 +23,10 @@ const routes: Routes = [{
       path: 'speaker',
       component: SpeakerComponent,
     },
+    {
+      path: 'speech',
+      component: SpeechComponent,
+    }
   ],
 }];
 

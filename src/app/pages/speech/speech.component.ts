@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
-import {LocalDataSource} from 'ng2-smart-table';
-import {CustomEditorComponent} from './custom-editor.component';
-import { SpeakerService } from 'app/services/speaker.service';
+import { Component, OnInit } from '@angular/core';
+import { SpeechService } from 'app/services/speech.service';
+import { LocalDataSource } from 'ng2-smart-table';
+import { CustomEditorComponent } from '../speaker/custom-editor.component';
 
 @Component({
-  selector: 'ngx-speaker-table',
-  templateUrl: './speaker.component.html',
-  styleUrls: ['./speaker.component.scss'],
+  selector: 'speech',
+  templateUrl: './speech.component.html',
+  styleUrls: ['./speech.component.scss']
 })
-export class SpeakerComponent {
+export class SpeechComponent {
+
 
   settings = {
     add: {
@@ -28,17 +29,14 @@ export class SpeakerComponent {
       confirmDelete: true,
     },
     columns: {
-      firstname: {
-        title: 'Nom',
+      name: {
+        title: 'Intitulé',
         type: 'string',
       },
-      lastname: {
-        title: 'Type',
-        type: 'string',
-      },
-      assembly: {
-        valuePrepareFunction: (assembly) => {
-          return assembly.name;
+      theme: {
+        title: 'Theme',
+        valuePrepareFunction: (theme) => {
+          return theme.name;
         },
         editor: {
           type: 'custom',
@@ -50,7 +48,7 @@ export class SpeakerComponent {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(private service: SpeakerService) {
+  constructor(private service: SpeechService) {
     this.service.getAll().subscribe(res => {
       this.source.load(res);
     });
