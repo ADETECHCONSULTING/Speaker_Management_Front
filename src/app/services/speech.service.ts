@@ -15,6 +15,14 @@ export class SpeechService {
     return this.http.get(`${baseUrl}/all`);
   }
 
+  getHistory(): Observable<any> {
+    return this.http.get(`${baseUrl}/history`);
+  }
+
+  createHistory(data): Observable<any> {
+    return this.http.post(`${baseUrl}/history`, data);
+  }
+
   create(data): Observable<any> {
     return this.http.post(baseUrl, data);
   }

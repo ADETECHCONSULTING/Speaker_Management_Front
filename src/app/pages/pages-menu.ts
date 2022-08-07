@@ -18,8 +18,13 @@ export const MENU_ITEMS: NbMenuItem[] = [
   },
   {
     title: 'N° Discours',
-    icon: 'people-outline',
+    icon: 'book-open-outline',
     link: '/pages/speech',
+  },
+  {
+    title: 'Historique',
+    icon: 'book-open-outline',
+    link: '/pages/histo-speech',
   }
   // {
   //   title: 'Auth',

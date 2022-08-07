@@ -1,5 +1,8 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SpeakerService } from 'app/services/speaker.service';
+import { SpeechService } from 'app/services/speech.service';
+import { CalendarKitMonthCellComponent } from './calendar-kit-month-cell.component';
 
 @Component({
   selector: 'ngx-dashboard',
@@ -10,8 +13,23 @@ export class DashboardComponent implements OnInit {
   firstForm: FormGroup;
   secondForm: FormGroup;
   thirdForm: FormGroup;
-
-  constructor(private fb: FormBuilder) {
+  speechesAvailable = [];
+  speakersAvailable = [];
+  targetDate = new Date();
+  selectedSpeech;
+  selectedSpeaker;
+  deadline = new Date();
+  monthCellComponent = CalendarKitMonthCellComponent;
+  @ViewChild('stepper') stepper: ElementRef;
+  
+  constructor(
+    private fb: FormBuilder,
+    private speechService: SpeechService,
+    private speakerService: SpeakerService
+    ) {
+      this.speechService.getAll().subscribe(res => {
+        this.speechesAvailable = res;
+      })
   }
 
   ngOnInit() {
@@ -22,14 +40,13 @@ export class DashboardComponent implements OnInit {
     this.secondForm = this.fb.group({
       secondCtrl: ['', Validators.required],
     });
-
-    this.thirdForm = this.fb.group({
-      thirdCtrl: ['', Validators.required],
-    });
   }
 
   onFirstSubmit() {
     this.firstForm.markAsDirty();
+    this.speakerService.getAll().subscribe(res => {
+      this.speakersAvailable = res;
+    })
   }
 
   onSecondSubmit() {
@@ -38,6 +55,27 @@ export class DashboardComponent implements OnInit {
 
   onThirdSubmit() {
     this.thirdForm.markAsDirty();
+  }
+
+  onSpeechClick(speech) {
+    this.selectedSpeech = speech;
+    this.firstForm.get('firstCtrl').setValue(speech);
+  }
+
+  onSpeakerClick(speaker) {
+    this.selectedSpeaker = speaker;
+    this.secondForm.get('secondCtrl').setValue(speaker);
+  }
+
+  saveRequest() {
+    let data = {
+      date: this.targetDate,
+      speech: this.selectedSpeech,
+      speaker: this.selectedSpeaker
+    }
+    this.speechService.createHistory(data).subscribe(() => {
+      (this.stepper as any).reset();
+    });
   }
 
 }

@@ -5,6 +5,7 @@ import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {SpeakerComponent} from './speaker/speaker.component';
 import { SpeechComponent } from './speech/speech.component';
+import { HistorySpeechComponent } from './history-speech/history-speech.component';
 
 const routes: Routes = [{
   path: '',
@@ -26,6 +27,10 @@ const routes: Routes = [{
     {
       path: 'speech',
       component: SpeechComponent,
+    },
+    {
+      path: 'histo-speech',
+      component: HistorySpeechComponent,
     }
   ],
 }];

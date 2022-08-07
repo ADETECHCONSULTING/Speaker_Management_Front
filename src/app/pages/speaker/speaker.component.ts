@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
 import {LocalDataSource} from 'ng2-smart-table';
-import {CustomEditorComponent} from './custom-editor.component';
 import { SpeakerService } from 'app/services/speaker.service';
+import { zip } from 'rxjs';
+import { AssemblyService } from 'app/services/assembly.service';
+import { CustomEditorButtonComponent } from './custom-editor-button.component';
+import { SpeechService } from 'app/services/speech.service';
+import { NbDialogService } from '@nebular/theme';
+import { SelectSpeechesDialogComponent } from '../dialogs/select-speeches.dialog/select-speeches.dialog.component';
+import { CustomEditorEmptyComponent } from './custom-editor-empty.component';
 
 @Component({
   selector: 'ngx-speaker-table',
@@ -9,6 +15,9 @@ import { SpeakerService } from 'app/services/speaker.service';
   styleUrls: ['./speaker.component.scss'],
 })
 export class SpeakerComponent {
+
+  assemblies = [];
+  speechesRefs = [];
 
   settings = {
     add: {
@@ -33,16 +42,44 @@ export class SpeakerComponent {
         type: 'string',
       },
       lastname: {
-        title: 'Type',
+        title: 'Prénom',
         type: 'string',
       },
       assembly: {
+        title: 'Assemblée',
         valuePrepareFunction: (assembly) => {
           return assembly.name;
         },
         editor: {
+          type: 'list',
+          config: {
+            selectText: 'Select',
+            list: this.assemblies,
+            valuePrepareFunction: (assembly) => {
+              return assembly.name;
+            },
+          },
+        },
+      },
+      button: {
+        type: 'custom',
+        editable: false,
+        width: '10%',
+        renderComponent: CustomEditorButtonComponent,
+        onComponentInitFunction: instance => {
+          instance.save.subscribe(row => {
+            this.dialogService.open(SelectSpeechesDialogComponent, {
+              context: {
+                title: `Liste des discours présentable par ${row.firstname}`,
+                list: this.speechesRefs,
+                speaker: row
+              },
+            })
+          });
+        },
+        editor: {
           type: 'custom',
-          component: CustomEditorComponent,
+          component: CustomEditorEmptyComponent
         },
       }
     },
@@ -50,15 +87,20 @@ export class SpeakerComponent {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(private service: SpeakerService) {
-    this.service.getAll().subscribe(res => {
-      this.source.load(res);
+  constructor(private speakerService: SpeakerService,
+     private assemblyService: AssemblyService,
+     private speechService: SpeechService,
+     private dialogService: NbDialogService) {
+    zip(this.speakerService.getAll(), this.assemblyService.getAllNames(), this.speechService.getAll()).subscribe(res => {
+      this.source.load(res[0]);
+      this.assemblies = res[1];
+      this.speechesRefs = res[2];
     });
   }
 
   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
-      this.service.delete(event.data.id).subscribe(() => {
+      this.speakerService.delete(event.data.id).subscribe(() => {
         event.confirm.resolve();
       });
     } else {
@@ -67,13 +109,13 @@ export class SpeakerComponent {
   }
 
   onAddConfirm(event): void {
-    this.service.create(event.newData).subscribe(() => {
+    this.speakerService.create(event.newData).subscribe(() => {
       event.confirm.resolve();
     });
   }
 
   onEditConfirm(event): void {
-    this.service.update(event.newData.id, event.newData).subscribe(() => {
+    this.speakerService.update(event.newData).subscribe(() => {
       event.confirm.resolve();
     });
   }

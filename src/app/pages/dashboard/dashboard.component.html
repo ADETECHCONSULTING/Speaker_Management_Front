@@ -3,51 +3,99 @@
     <nb-stepper #stepper>
       <nb-step [stepControl]="firstForm" label="1ère étape">
         <form [formGroup]="firstForm" (ngSubmit)="onFirstSubmit()" class="step-container">
-          <p class="lorem">
-            Lorizzle ipsum dolizzle stuff fizzle, consectetuer adipiscing break it down. Nullizzle sapien velizzle,
-            my shizz pimpin', shizzle my nizzle crocodizzle shut the shizzle up, gravida vizzle, dang.
+          <p class="lorem h6">
+            Liste des discours disponible n'ayant pas été donné lors de ces deux dernières années.
           </p>
-          <div class="input-group">
-            <input nbInput type="text" placeholder="Enter your name" class="form-control" formControlName="firstCtrl"
-                   [ngClass]="{'form-control-danger': firstForm.invalid && (firstForm.dirty || firstForm.touched)}">
-          </div>
+          <nb-list class="list-props">
+            <nb-list-item *ngFor="let speech of speechesAvailable">
+              <button nbButton status="primary" (click)="onSpeechClick(speech)"><nb-icon icon="plus-circle"></nb-icon></button> {{ speech.name }}
+            </nb-list-item>
+          </nb-list>
           <button nbButton nbStepperNext>Suivant</button>
         </form>
       </nb-step>
       <nb-step [stepControl]="secondForm" label="2e étape">
         <form [formGroup]="secondForm" (ngSubmit)="onSecondSubmit()" class="step-container">
-          <p class="lorem">
-            Pellentesque we gonna chung tortor.
-            Sizzle pizzle. Fizzle izzle dolor dapibus fo shizzle mah nizzle fo rizzle, mah home g-dizzle tempus tempor.
-            Maurizzle cool nibh owned turpizzle. My shizz fo shizzle tortor.
+          <p class="lorem h6">
+            Liste des orateurs disponible (n'ayant pas donné de discours dans l'assemblée de Landerneau depuis 1 an) pour le discours sélectionné.
           </p>
-          <div class="input-group">
-            <input nbInput type="text" placeholder="Enter favorite movie" class="form-control" formControlName="secondCtrl"
-                   [ngClass]="{'form-control-danger': secondForm.invalid && (secondForm.dirty || secondForm.touched)}">
-          </div>
+          <nb-list class="list-props">
+            <nb-list-item *ngFor="let speaker of speakersAvailable">
+              <button nbButton status="primary" (click)="onSpeakerClick(speaker)"><nb-icon icon="plus-circle"></nb-icon></button> {{ speaker.firstname }} {{ speaker.lastname }}
+            </nb-list-item>
+          </nb-list>
           <button nbButton nbStepperPrevious>Précédent</button>
           <button nbButton nbStepperNext>Suivant</button>
         </form>
       </nb-step>
-      <nb-step [stepControl]="thirdForm" label="3e étape">
+      <nb-step label="3e étape">
         <form [formGroup]="thirdForm" (ngSubmit)="onThirdSubmit()" class="step-container">
-          <p class="lorem">
-            Things boom shackalack rhoncus yo. In fo shizzle my nizzle gangsta platea dictumst. Check it out pot.
+          <p class="lorem h6">
+            Sélectionner une date souhaitée. Une demande sera généré automatiquement, à envoyer via la boite mail JWPub
           </p>
-          <div class="input-group">
-            <input nbInput type="text" placeholder="Enter something" class="form-control" formControlName="thirdCtrl"
-                   [ngClass]="{'form-control-danger': thirdForm.invalid && (thirdForm.dirty || thirdForm.touched)}">
-          </div>
+          <nb-calendar-month-picker [(month)]="targetDate"
+                                  [date]="targetDate" [cellComponent]="monthCellComponent">
+          </nb-calendar-month-picker>
           <button nbButton nbStepperPrevious>Précédent</button>
           <button nbButton nbStepperNext>Valider</button>
         </form>
       </nb-step>
-      <nb-step [stepControl]="thirdForm" [hidden]="true" label="3e étape">
+      <nb-step [hidden]="true" label="3e étape">
         <div class="step-container">
           <h3>Demande complétée</h3>
-          <button nbButton (click)="stepper.reset()">Réessayer</button>
+          <div *ngIf="selectedSpeech && selectedSpeaker" class="subtitle">
+            Bonjour ..., 
+            <br>
+            J'espère que tu vas bien.
+            <br>
+            Pour l’assemblée de Landerneau, 
+            je recherche un orateur pouvant nous présenter le discours <bold> {{ selectedSpeech.name }} </bold> 
+            le {{targetDate | date: 'dd/MM/yyyy'}}. Est-ce que frère {{selectedSpeaker.firstname}} {{selectedSpeaker.lastname}} pourrait nous le présenter ?
+            <br>
+            Est-ce que tu pourrais me donner une réponse avant le {{ deadline.getDate() + 7 | date: 'dd/MM/yyyy'}} stp ?
+            <br>
+            Merci d’avance pour ton aide
+            <br>
+            Traore Adama
+          </div>
+          <br>
+          <button nbButton (click)="stepper.reset()">Nouvelle demande</button>
+          <button nbButton (click)="saveRequest()" status="success">Sauvegarder</button>
         </div>
       </nb-step>
     </nb-stepper>
+  </nb-card-body>
+</nb-card>
+<nb-card *ngIf="selectedSpeech">
+  <nb-card-body>
+
+    <nb-user size="large"
+             [name]="selectedSpeech.name"
+             [title]="selectedSpeech.theme.name"
+             showInitials=false>
+    </nb-user>
+
+  </nb-card-body>
+</nb-card>
+<nb-card *ngIf="selectedSpeaker">
+  <nb-card-body>
+
+    <nb-user size="large"
+             [name]="selectedSpeaker.firstname + ' ' + selectedSpeaker.lastname"
+             [title]="selectedSpeaker.assembly.name">
+    </nb-user>
+
+  </nb-card-body>
+</nb-card>
+
+<nb-card *ngIf="targetDate">
+  <nb-card-body>
+
+    <nb-user size="large"
+             name="{{targetDate | date: 'dd/MM/yyyy'}}"
+             title="date souhaitée"
+             showInitials=false>
+    </nb-user>
+
   </nb-card-body>
 </nb-card>

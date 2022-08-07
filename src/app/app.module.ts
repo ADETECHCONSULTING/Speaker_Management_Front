@@ -5,7 +5,7 @@
  */
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
@@ -23,7 +23,10 @@ import {
   NbWindowModule,
 } from '@nebular/theme';
 import { ReactiveFormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
 
+registerLocaleData(localeFr, 'fr');
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -47,6 +50,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ThemeModule.forRoot(),
   ],
   bootstrap: [AppComponent],
+  providers: [
+    {provide: LOCALE_ID, useValue: 'fr' }
+  ]
 })
 export class AppModule {
 }

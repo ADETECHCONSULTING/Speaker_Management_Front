@@ -1,0 +1,11 @@
+<nb-card class="dialog-card">
+    <nb-card-header>{{ title }}</nb-card-header>
+    <nb-list>
+        <nb-list-item *ngFor="let speech of list">
+            <nb-checkbox [checked]="speakerAlreadyHasSpeech(speech)" (checkedChange)="getCheckboxValues($event, speech)" status="basic">{{ speech.name }}</nb-checkbox>
+        </nb-list-item>
+    </nb-list>
+    <nb-card-footer>
+      <button nbButton status="primary" (click)="close()">Dismiss Dialog</button>
+    </nb-card-footer>
+  </nb-card>
